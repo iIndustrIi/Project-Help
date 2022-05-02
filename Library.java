@@ -1,40 +1,22 @@
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Library {
 
-  private List<Book> books;
- private List<Customer> customers;
-
- public Library() {
+	public final int LATE_FEE_PER_DAY = 3;
+	public final Duration BORROW_DURATION = Duration.ofDays(7); 
+	
+	public final List<Book> books;
+	public final List<Customer> customers;
+	public final List<RentRecord> rentRecords;
+	public final List<ReturnRecord> returnRecords;
+	
+	public Library() {
+		books = new ArrayList<>();
+		customers = new ArrayList<>();
+		rentRecords = new ArrayList<>();
+		returnRecords = new ArrayList<>();
+	}
+	
 }
-
-  public Library(List<Book> books, List<Customer> customers) {
-    this.books = books;
- this.customers = customers;
-  }
-
-  public List<Book> getBooks() {
-    return books;
-  }
-
-  public void setBooks(List<Book> books) {
-    this.books = books;
-  }
-
-  public List<Customer> getCustomers() {
-    return customers;
-  }
-
-  public void setCustomers(List<Customer> customers) {
-    this.customers = customers;
-  }
-
-  @Override
-  public String toString() {
-    return "Library{" +
-        "books=" + books +
-        ", customers=" + customers +
-        '}';
-  }
-}
-

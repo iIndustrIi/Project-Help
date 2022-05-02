@@ -1,97 +1,67 @@
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 public class LibraryService {
 
-  public void addCustomer(Library library, Customer newCustomer) {
-List<Customer> customers = library.getCustomers();
-    customers.add(newCustomer);
-    library.setCustomers(customers);
-  }
+	public final Library library;
+	
+	public LibraryService(Library library) {
+		this.library = library;
+	}
+	
+	public void addBook(Book newBook) {
+		library.books.add(newBook);
+	}
+	
+	public void addCustomer(Customer newCustomer) {
+		if (newCustomer != null && !library.customers.contains(newCustomer)) {
+			library.customers.add(newCustomer);
+		}
+	}
 
-  public void deleteCustomer(Library library, String customerName) {
-List<Customer> customers = library.getCustomers();
-    Customer customerToBeDeleted = null;
- for(Customer c : customers) {
-      if (c.getName().equals(customerName)) {
-customerToBeDeleted = c;
-      }
-}
-    if(customerToBeDeleted != null && customerToBeDeleted.getBookBorrowed() != null) {
-customers.remove(customerToBeDeleted);
-      library.setCustomers(customers);
-    }
-}
+	public void deleteCustomer(Customer customer) {
+		if (customer != null && isCostumerBorrowed(customer)) {
+			library.customers.remove(customer);
+		}
+	}
+	
+	//Change to a better name
+	public boolean isCostumerBorrowed(Customer customer) {
+		throw new UnsupportedOperationException("Not implemented yet");
+	}
 
-  public void addBook(Library library, Book newBook) {
-List<Book> books = library.getBooks();
-    books.add(newBook);
-    library.setBooks(books);
-  }
 
-  public void rentBook(Library library, Book book, Customer customer) {
-List<Book> books = library.getBooks();
-    List<Customer> customers = library.getCustomers();
-    Customer existingCustomer = null;
-    Book existingBook = null;
- for(Customer c : customers) {
-      if (c.getName().equals(customer.getName())) {
-existingCustomer = c;
-      }
-}
-    for(Book b : books) {
-      if (b.getTitle().equals(book.getTitle())) {
-existingBook = b;
-      }
-}
-books.remove(existingBook);
-    customers.remove(existingCustomer);
 
-    book.setBorrowedBy(existingCustomer);
-    customer.setBookBorrowed(book);
+	public void rentBook(Book book, Customer customer) {
+		if (book == null || !library.books.contains(book)) {
+			return;
+		}
+		if (customer == null || !library.customers.contains(customer)) {
+			return;
+		}
+		LocalDate now = LocalDate.now();
+		RentRecord record = new RentRecord(book, customer, now, library.BORROW_DURATION, library.LATE_FEE_PER_DAY);
+		library.rentRecords.add(record);
+	}
 
-    books.add(existingBook);
-    customers.add(existingCustomer);
+	public void returnBook(Book book, Customer customer) {
+		if (book == null || !library.books.contains(book)) {
+			return;
+		}
+		if (customer == null || !library.customers.contains(customer)) {
+			return;
+		}
+		for (RentRecord rentRecord: library.rentRecords) {
+			if (rentRecord.customer().equals(customer) 
+					&& rentRecord.book().equals(book)) {
+				LocalDate now = LocalDate.now();
+				ReturnRecord returnRecord = new ReturnRecord(rentRecord, now);
+				library.returnRecords.add(returnRecord);
+				library.rentRecords.remove(rentRecord);
+			}
+		}
 
-    library.setBooks(books);
-    library.setCustomers(customers);
-  }
+	}
 
-  public void returnBook(Library library, Book book, Customer customer) {
-List<Book> books = library.getBooks();
-    List<Customer> customers = library.getCustomers();
-    Customer existingCustomer = null;
-    Book existingBook = null;
- for(Customer c : customers) {
-      if (c.getName().equals(customer.getName())) {
-existingCustomer = c;
-      }
-}
-    for(Book b : books) {
-      if (b.getTitle().equals(book.getTitle())) {
-existingBook = b;
-      }
-}
-books.remove(existingBook);
-    customers.remove(existingCustomer);
 
- if (calculateLateFee(customer) != 0) {
-book.setBorrowedBy(null);
-      customer.setBookBorrowed(null);
-
-      books.add(book);
-      customers.add(customer);
-
-      library.setBooks(books);
-      library.setCustomers(customers);
-    }
-
-}
-
-  private long calculateLateFee(Customer customer){
-    long diff = ChronoUnit.DAYS.between(LocalDate.now(),customer.getDueDate());
- return diff * 3;
-  }
 
 }
