@@ -85,13 +85,12 @@ public class TableSelector extends SubWindow {
 		table.setIntercellSpacing(new Dimension(0, 0));
 		table.setRowHeight(25);
 		table.setShowVerticalLines(false);
-        
-        contentPane.add(label);
-        contentPane.add(scrollPane);
+		
+		contentPane.add(label);
+		contentPane.add(scrollPane);
         contentPane.add(buttonsPanel);
 		
         setContentPane(contentPane);
-
 	}
 	
 	public void addButton(RunnableButton button) {
