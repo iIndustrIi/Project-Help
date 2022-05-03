@@ -1,5 +1,6 @@
 package student.jonathanwhite.librarysystem.ui.info;
 
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -35,9 +36,11 @@ public abstract class InfoWindow extends SubWindow {
 		contentPane.setBorder(BorderFactory.createEmptyBorder(25, 25,25,25));
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		
-		contentPane.add(infoPanel);
-		contentPane.add(tablePanel);
-		contentPane.add(buttonsPanel);
+		JPanel panel0 = new JPanel(new FlowLayout());
+		panel0.add(infoPanel);
+		panel0.add(tablePanel);
+		contentPane.add(panel0);
+        contentPane.add(buttonsPanel);
 		
 		setContentPane(contentPane);
 	}

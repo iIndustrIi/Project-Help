@@ -90,6 +90,17 @@ public class LibraryService {
 		}
 		return false;
 	}
+	
+	public boolean isBookBorrowedBy(Book book, Customer customer) {
+		for (RentRecord record: library.rentRecords) {
+			if (record.book().equals(book)) {
+				if (record.customer().equals(customer)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public void rentBook(Book book, Customer customer) {
 		if (book == null || !library.books.contains(book)) {

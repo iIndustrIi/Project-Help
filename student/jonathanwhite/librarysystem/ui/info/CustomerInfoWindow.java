@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import student.jonathanwhite.librarysystem.Book;
 import student.jonathanwhite.librarysystem.Customer;
 import student.jonathanwhite.librarysystem.Main;
+import student.jonathanwhite.librarysystem.ui.tableselectors.BooksWindow;
 import student.jonathanwhite.librarysystem.ui.tableselectors.TableSelector.RunnableButton;
 
 public class CustomerInfoWindow extends InfoWindow {
@@ -25,6 +27,15 @@ public class CustomerInfoWindow extends InfoWindow {
 		label("Phone Number", customer.phone());
 		label("Registered Date", registeredDate);
 		label("Books Borrowed", books.size() + "/" + Main.service.library.BOOK_BORROWING_LIMIT);
+		
+		BooksWindow booksWindow = new BooksWindow();
+		for (int i = 0; i < Main.library.books.size(); i++) {
+			Book book = Main.library.books.get(i);
+			if (!Main.service.isBookBorrowedBy(book, customer)) {
+				booksWindow.model.removeRow(i);
+			}
+		}
+		tablePanel.add((JPanel) booksWindow.getContentPane());
 		
 		Main.service.listenerCustomerDeleted.add((e, i) -> {
 			if (customer == e) {
