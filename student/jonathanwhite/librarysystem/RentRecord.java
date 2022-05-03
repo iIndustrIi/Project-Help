@@ -1,3 +1,5 @@
+package student.jonathanwhite.librarysystem;
+
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -8,9 +10,13 @@ public record RentRecord(Book book, Customer customer, LocalDate borrowDate, Loc
 		this(book, customer, borrowDate, borrowDate.plusDays(duration.toDays()), lateFee);
 	}
 	
+	public boolean isOverdue() {
+		return dueDate.isBefore(LocalDate.now());
+	}
+	
 	public int feePayable() {
 		LocalDate now = LocalDate.now();
-		if (dueDate.isBefore(now)) {
+		if (!isOverdue()) {
 			return 0;
 		}
 		int days = dueDate.until(now).getDays();

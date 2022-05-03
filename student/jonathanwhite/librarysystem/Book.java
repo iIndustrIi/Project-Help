@@ -1,3 +1,5 @@
+package student.jonathanwhite.librarysystem;
+
 import java.time.LocalDate;
 
 public record Book(String title, String author, String publisher, LocalDate releaseDate) {
