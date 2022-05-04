@@ -1,3 +1,11 @@
+/*
+ * Student Name: Jonathan White
+ * Date Due: 05/03/2022
+ * Date Submitted: 05/03/2022
+ * Program Name: Library Reservation System
+ * Program Description:  A library reservation system capable of handling the renting and returning of books, as well as the creation and detailing of both said books and customers.
+*/
+
 package student.jonathanwhite.librarysystem.ui.registers;
 
 import java.awt.Component;
@@ -6,19 +14,21 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.text.MaskFormatter;
 
 import student.jonathanwhite.librarysystem.Main;
 import student.jonathanwhite.librarysystem.ui.SubWindow;
+import student.jonathanwhite.librarysystem.ui.tableselectors.TableSelector.RunnableButton;
 
 public abstract class Formulary extends SubWindow implements ActionListener {
 
@@ -31,8 +41,9 @@ public abstract class Formulary extends SubWindow implements ActionListener {
 		fieldPanel = new FieldPanel();
 		fields = new ArrayList<>();
 		addFields(entries);
-		JButton button = new JButton(buttonText);
-		button.addActionListener(this);
+		RunnableButton button = new RunnableButton(buttonText, () -> {
+			actionPerformed(null);
+		});
 		
 		JPanel contentPane = new JPanel();
 		
@@ -64,7 +75,7 @@ public abstract class Formulary extends SubWindow implements ActionListener {
 		String[] fieldTexts = new String[fields.size()];
 		for (int i = 0; i < fields.size(); i++) {
 			Field field = fields.get(i);
-			if (!field.isValid()) {
+			if (!field.isValidField()) {
 				field.onInvalid();
 				return;
 			}
@@ -96,6 +107,14 @@ public abstract class Formulary extends SubWindow implements ActionListener {
 	public abstract static class Field extends JFormattedTextField {
 		private static final long serialVersionUID = 1L;
 		public final String name;
+		public Field(String name, AbstractFormatter format) {
+			super(format);
+			this.name = name;
+		}
+		public Field(String name, Format format) {
+			super(new MaskFormatter());
+			this.name = name;
+		}
 		public Field(String name) {
 			super();
 			this.name = name;

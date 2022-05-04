@@ -1,3 +1,11 @@
+/*
+ * Student Name: Jonathan White
+ * Date Due: 05/03/2022
+ * Date Submitted: 05/03/2022
+ * Program Name: Library Reservation System
+ * Program Description:  A library reservation system capable of handling the renting and returning of books, as well as the creation and detailing of both said books and customers.
+*/
+
 package student.jonathanwhite.librarysystem;
 
 import java.time.LocalDate;
@@ -14,6 +22,10 @@ public class LibraryService {
 	public final List<ObjIntConsumer<Book>> listenerBookDeleted;
 	public final List<ObjIntConsumer<RentRecord>> listenerRentDeleted;
 	public final List<ObjIntConsumer<ReturnRecord>> listenerReturnDeleted;
+	public final List<ObjIntConsumer<Customer>> listenerCustomerAdded;
+	public final List<ObjIntConsumer<Book>> listenerBookAdded;
+	public final List<ObjIntConsumer<RentRecord>> listenerRentAdded;
+	public final List<ObjIntConsumer<ReturnRecord>> listenerReturnAdded;
 	
 	public LibraryService(Library library) {
 		this.library = library;
@@ -21,15 +33,25 @@ public class LibraryService {
 		this.listenerBookDeleted = new ArrayList<>();
 		this.listenerRentDeleted = new ArrayList<>();
 		this.listenerReturnDeleted = new ArrayList<>();
+		this.listenerCustomerAdded = new ArrayList<>();
+		this.listenerBookAdded = new ArrayList<>();
+		this.listenerRentAdded = new ArrayList<>();
+		this.listenerReturnAdded = new ArrayList<>();
 	}
 	
 	public void addBook(Book newBook) {
 		library.books.add(newBook);
+		for (ObjIntConsumer<Book> c: listenerBookAdded) {
+			c.accept(newBook, library.books.size() - 1);
+		}
 	}
 	
 	public void addCustomer(Customer newCustomer) {
 		if (newCustomer != null && !library.customers.contains(newCustomer)) {
 			library.customers.add(newCustomer);
+			for (ObjIntConsumer<Customer> c: listenerCustomerAdded) {
+				c.accept(newCustomer, library.customers.size() - 1);
+			}
 		}
 	}
 	
@@ -40,6 +62,25 @@ public class LibraryService {
 			}
 		}
 		return null;
+	}
+	
+	public RentRecord searchRentRecord(Predicate<RentRecord> predicate) {
+		for (RentRecord record: library.rentRecords) {
+			if (predicate.test(record)) {
+				return record;
+			}
+		}
+		return null;
+	}
+	
+	public int totalPendingFee(Customer customer) {
+		int fee = 0;
+		for (RentRecord record: library.rentRecords) {
+			if (record.customer().equals(customer)) {
+				fee += record.feePayable();
+			}
+		}
+		return fee;
 	}
 	
 	public Customer searchCustomer(Predicate<Customer> predicate) {
@@ -70,6 +111,20 @@ public class LibraryService {
 			return 1;
 		}
 		return 0;
+	}
+	
+	public boolean deleteReturnRecord(ReturnRecord record) {
+		for (int i = 0; i < library.returnRecords.size(); i++) {
+			ReturnRecord e = library.returnRecords.get(i);
+			if (record.equals(e)) {
+				library.returnRecords.remove(record);
+				for (ObjIntConsumer<ReturnRecord> c: listenerReturnDeleted) {
+					c.accept(e, i);
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public List<Book> customerBooks(Customer customer) {
@@ -115,6 +170,9 @@ public class LibraryService {
 		LocalDate now = LocalDate.now();
 		RentRecord record = new RentRecord(book, customer, now, library.BORROW_DURATION, library.LATE_FEE_PER_DAY);
 		library.rentRecords.add(record);
+		for (ObjIntConsumer<RentRecord> c: listenerRentAdded) {
+			c.accept(record, library.rentRecords.size() - 1);
+		}
 	}
 
 	public boolean canCustomerRent(Customer customer) {
@@ -128,13 +186,20 @@ public class LibraryService {
 		if (customer == null || !library.customers.contains(customer)) {
 			return false;
 		}
-		for (RentRecord rentRecord: library.rentRecords) {
+		for (int i = 0; i < library.rentRecords.size(); i++) {
+			RentRecord rentRecord = library.rentRecords.get(i);
 			if (rentRecord.customer().equals(customer) 
 					&& rentRecord.book().equals(book)) {
 				LocalDate now = LocalDate.now();
 				ReturnRecord returnRecord = new ReturnRecord(rentRecord, now);
 				library.returnRecords.add(returnRecord);
 				library.rentRecords.remove(rentRecord);
+				for (ObjIntConsumer<RentRecord> e: listenerRentDeleted) {
+					e.accept(rentRecord, i);
+				}
+				for (ObjIntConsumer<ReturnRecord> c: listenerReturnAdded) {
+					c.accept(returnRecord, library.returnRecords.size() - 1);
+				}
 				deleteCustomer(customer);
 				return true;
 			}

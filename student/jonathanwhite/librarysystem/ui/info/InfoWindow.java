@@ -1,3 +1,11 @@
+/*
+ * Student Name: Jonathan White
+ * Date Due: 05/03/2022
+ * Date Submitted: 05/03/2022
+ * Program Name: Library Reservation System
+ * Program Description:  A library reservation system capable of handling the renting and returning of books, as well as the creation and detailing of both said books and customers.
+*/
+
 package student.jonathanwhite.librarysystem.ui.info;
 
 import java.awt.FlowLayout;
@@ -25,7 +33,7 @@ public abstract class InfoWindow extends SubWindow {
 	public final JPanel buttonsPanel;
 	public final JPanel tablePanel;
 	
-	public InfoWindow() {
+	public InfoWindow(boolean showComplete) {
 		super();
 		map = new LinkedHashMap<>();
 		infoPanel = new InfoPanel();
@@ -51,9 +59,6 @@ public abstract class InfoWindow extends SubWindow {
 	}
 	
 	public void addButton(RunnableButton button) {
-		button.addActionListener(e -> {
-			button.run();
-		});
         button.setFont(Main.font);
         button.setFocusable(false);
         buttonsPanel.add(button);

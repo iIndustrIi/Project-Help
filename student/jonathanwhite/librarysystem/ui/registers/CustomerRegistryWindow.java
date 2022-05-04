@@ -1,3 +1,11 @@
+/*
+ * Student Name: Jonathan White
+ * Date Due: 05/03/2022
+ * Date Submitted: 05/03/2022
+ * Program Name: Library Reservation System
+ * Program Description:  A library reservation system capable of handling the renting and returning of books, as well as the creation and detailing of both said books and customers.
+*/
+
 package student.jonathanwhite.librarysystem.ui.registers;
 
 import java.awt.event.KeyAdapter;
@@ -61,24 +69,24 @@ public class CustomerRegistryWindow extends Formulary {
             		String onlyNumbers = string.replaceAll("\\D+","");
             		String formated = onlyNumbers;
             		
-               		if (string.length() >= 17) {
+               		if (string.length() >= 14) {
                 		setEditable(false);
-                		return string.substring(0, 17);
+                		return string.substring(0, 14);
             		} else {
                 		setEditable(true);
             		}
             		
             		if (onlyNumbers.length() > 0) {
-            			formated = "+" + formated;
+            			formated = "(" + formated;
             		} else return formated;
             		if (onlyNumbers.length() >= 3) {
-            			formated = addChar(formated, ' ', 3);
+            			formated = addChar(formated, ')', 4);
             		} else return formated;
-               		if (onlyNumbers.length() >= 5) {
-            			formated = addChar(formated, ' ', 6);
+               		if (onlyNumbers.length() >= 4) {
+            			formated = addChar(formated, ' ', 5);
             		} else return formated;
-               		if (onlyNumbers.length() >= 9) {
-            			formated = addChar(formated, '-', 12);
+               		if (onlyNumbers.length() >= 7) {
+            			formated = addChar(formated, '-', 9);
             		}
                		return formated;
             	}
@@ -90,7 +98,7 @@ public class CustomerRegistryWindow extends Formulary {
 
 		@Override
 		public boolean isValidField() {
-			return getText() != null && !getText().isBlank() && getText().length() != 17;
+			return getText() != null && !getText().isBlank() && getText().length() == 14;
 		}
 
 		@Override
